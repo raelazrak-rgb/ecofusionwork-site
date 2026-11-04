@@ -4,6 +4,7 @@
   const $ = s => document.querySelector(s);
   const grid = $('#grid'), chips = $('#chips'), q = $('#q'), count = $('#count');
   const imgOf = c => '/img/rayons/' + (R.find(r => r.id === c) || R[0]).img + '.webp';
+  const pimg = p => p.ph ? '/img/produits/' + p.id + '.webp' : imgOf(p.c);
   const rayonName = c => (R.find(r => r.id === c) || {}).n || '';
   const money = n => n.toLocaleString('fr-FR') + ' MAD';
   let cat = new URLSearchParams(location.search).get('rayon') || 'tous';
@@ -29,7 +30,7 @@
     count.textContent = list.length + ' produit' + (list.length > 1 ? 's' : '');
     grid.innerHTML = list.length ? list.map(p => `
       <article class="prod">
-        <div class="pimg"><img src="${imgOf(p.c)}" alt="${p.n}" loading="lazy" width="400" height="400">${p.tag ? `<span class="ptag">${p.tag}</span>` : ''}</div>
+        <div class="pimg"><img src="${pimg(p)}" alt="${p.n}" loading="lazy" width="400" height="400">${p.tag ? `<span class="ptag">${p.tag}</span>` : ''}</div>
         <div class="pin">
           <small>${rayonName(p.c)}</small>
           <h3>${p.n}</h3>
@@ -62,7 +63,7 @@
     const n = ids.reduce((s, id) => s + cart[id], 0);
     badge.textContent = n; fab.hidden = n === 0;
     lines.innerHTML = ids.length ? ids.map(id => { const p = P.find(x => x.id === id); return `
-      <div class="line"><img src="${imgOf(p.c)}" alt="" width="56" height="56"><div><b>${p.n}</b><small>${p.p ? money(p.p) + ' / ' + p.u : 'Prix sur demande · ' + p.u}</small></div>
+      <div class="line"><img src="${pimg(p)}" alt="" width="56" height="56"><div><b>${p.n}</b><small>${p.p ? money(p.p) + ' / ' + p.u : 'Prix sur demande · ' + p.u}</small></div>
       <div class="qty"><button data-q="-1" data-id="${id}" aria-label="Moins">−</button><span>${cart[id]}</span><button data-q="1" data-id="${id}" aria-label="Plus">+</button></div></div>`; }).join('') : '<p class="empty">Votre panier est vide.</p>';
     const priced = ids.filter(id => P.find(p => p.id === id).p);
     const total = priced.reduce((s, id) => s + P.find(p => p.id === id).p * cart[id], 0);
